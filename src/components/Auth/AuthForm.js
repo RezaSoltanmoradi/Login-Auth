@@ -4,9 +4,11 @@ import classes from "./AuthForm.module.css";
 const isNotEmpty = (value) => value?.length >= 4;
 
 const AuthForm = () => {
-    const nameInputRef = useRef();
-    const emailInputRef = useRef();
-    const passwordInputRef = useRef();
+    const [userName, setUserName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loginEmail, setLoginEmail] = useState("");
+    const [loginPassword, setLoginPassword] = useState("");
     const [isLogin, setIsLogin] = useState(true);
     const [isLoading, setIsloading] = useState(false);
     const authCtx = useContext(AuthContext);
@@ -14,42 +16,29 @@ const AuthForm = () => {
     const switchAuthModeHandler = () => {
         setIsLogin((prevState) => !prevState);
     };
+   
 
-    const resetUserValue = () => {
-        // nameInputRef.current.value = "";
-        emailInputRef.current.value = "";
-        passwordInputRef.current.value = "";
-    };
     const submitHandler = async (event) => {
         event.preventDefault();
+        const validName = isNotEmpty(userName);
+        const validEmail = isNotEmpty(email);
+        const validPssword = isNotEmpty(password);
+        const validLoginEmail = isNotEmpty(loginEmail);
+        const validLoginPassword = isNotEmpty(loginPassword);
 
-        const enteredName = nameInputRef.current?.value;
-        const enteredEmail = emailInputRef.current?.value;
-
-        const enteredPassword = passwordInputRef.current?.value;
-
-        const validName = isNotEmpty(enteredName);
-        const validEmail = isNotEmpty(enteredEmail);
-        const validPssword = isNotEmpty(enteredPassword);
         const formValidation = validEmail && validPssword && validName;
         setIsloading(true);
         if (isLogin) {
-            if (validEmail && validPssword) {
-                login({ email: enteredEmail, password: enteredPassword });
-                resetUserValue();
+            if (validLoginEmail && validLoginPassword) {
+                login({ email: loginEmail, password: loginPassword });
             }
-            setIsloading(false);
         } else {
             if (formValidation) {
                 register({
-                    userName: enteredName,
-                    email: enteredEmail,
-                    password: enteredPassword,
+                    userName: userName,
+                    email: email,
+                    password: password,
                 });
-
-                resetUserValue();
-                setIsLogin(true);
-                setIsloading(false);
             } else {
                 setIsloading(false);
                 return;
@@ -68,7 +57,10 @@ const AuthForm = () => {
                             type="text"
                             id="name"
                             required
-                            ref={nameInputRef}
+                            value={userName}
+                            onChange={(event) =>
+                                setUserName(event.target.value)
+                            }
                         />
                     </div>
                 )}
@@ -78,7 +70,12 @@ const AuthForm = () => {
                         type="email"
                         id="email"
                         required
-                        ref={emailInputRef}
+                        value={isLogin ? loginEmail : email}
+                        onChange={(event) => {
+                            isLogin
+                                ? setLoginEmail(event.target.value)
+                                : setEmail(event.target.value);
+                        }}
                     />
                 </div>
                 <div className={classes.control}>
@@ -87,7 +84,12 @@ const AuthForm = () => {
                         type="password"
                         id="password"
                         required
-                        ref={passwordInputRef}
+                        value={isLogin ? loginPassword : password}
+                        onChange={(event) => {
+                            isLogin
+                                ? setLoginPassword(event.target.value)
+                                : setPassword(event.target.value);
+                        }}
                     />
                 </div>
                 <div className={classes.actions}>
