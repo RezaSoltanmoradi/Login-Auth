@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import AuthContext from "../../context/auth-context";
 import classes from "./AuthForm.module.css";
 const isNotEmpty = (value) => value?.length >= 4;
@@ -16,7 +16,13 @@ const AuthForm = () => {
     const switchAuthModeHandler = () => {
         setIsLogin((prevState) => !prevState);
     };
-   
+    useEffect(() => {
+        setEmail("");
+        setPassword("");
+        setUserName("");
+        setLoginEmail("");
+        setLoginPassword("");
+    }, [isLogin]);
 
     const submitHandler = async (event) => {
         event.preventDefault();
